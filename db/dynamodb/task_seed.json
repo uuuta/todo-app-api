@@ -1,0 +1,94 @@
+{
+  "tasks": [
+    {
+      "PutRequest": {
+        "Item": {
+          "userId": {
+            "S": "user001"
+          },
+          "taskId": {
+            "S": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "title": {
+            "S": "task title1"
+          },
+          "content": {
+            "S": "task content"
+          },
+          "registrationDatetime": {
+            "S": "2023-12-20 09:00:00"
+          },
+          "startDatetime": {
+            "S": "2023-12-20 10:00:00"
+          },
+          "endDatetime": {
+            "S": "2023-12-20 12:00:00"
+          },
+          "done": {
+            "BOOL": false
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "userId": {
+            "S": "user001"
+          },
+          "taskId": {
+            "S": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "title": {
+            "S": "task title2"
+          },
+          "content": {
+            "S": "task content"
+          },
+          "registrationDatetime": {
+            "S": "2023-12-21 08:00:00"
+          },
+          "startDatetime": {
+            "S": "2023-12-21 09:00:00"
+          },
+          "endDatetime": {
+            "S": "2023-12-21 10:00:00"
+          },
+          "done": {
+            "BOOL": false
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "userId": {
+            "S": "user002"
+          },
+          "taskId": {
+            "S": "123e4567-e89b-12d3-a456-426614174002"
+          },
+          "title": {
+            "S": "task title3"
+          },
+          "content": {
+            "S": "task content"
+          },
+          "registrationDatetime": {
+            "S": "2023-12-22 17:00:00"
+          },
+          "startDatetime": {
+            "S": "2023-12-22 18:00:00"
+          },
+          "endDatetime": {
+            "S": "2023-12-22 19:00:00"
+          },
+          "done": {
+            "BOOL": false
+          }
+        }
+      }
+    }
+  ]
+}
