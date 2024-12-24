@@ -1,8 +1,11 @@
-# TODOアプリ（API） on AWS
+# TODO APP API
 
 ## 概要
 
-モノレポやめる
+TODOアプリ用のAPIです。
+FastAPI + Uvicorn 構成をDockerコンテナ化しています。
+現時点では、データストレージにAWS DynamoDBを想定した実装になっています。
+ローカルのDocker環境では、DynamoDB-Localを使用して動作確認できるようにしています。
 
 ## 構成
 
