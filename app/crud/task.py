@@ -16,11 +16,11 @@ class TaskDBClient(ABC):
         pass
 
     @abstractmethod
-    def get_task_by_id(self, user_id: str, task_id: UUID) -> Task:
+    def get_task_by_id(self, user_id: str, task_id: UUID) -> Task | None:
         pass
 
     @abstractmethod
-    def update_task(self, task: Task) -> Task:
+    def update_task(self, task: Task) -> Task | None:
         pass
 
     @abstractmethod
