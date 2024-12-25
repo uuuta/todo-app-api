@@ -21,5 +21,5 @@ settings = Settings()
 app_config = {
     "title": "TODO Application API",
     "description": "This application is an API example for TODO application.",
-    "version": "1.0.0"
+    "version": "0.1.0"
 }
