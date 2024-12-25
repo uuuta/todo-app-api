@@ -9,7 +9,7 @@ from config import settings
 from core.logging import get_logger
 from database.database import TaskDatabaseDep
 from models.task import Task as TaskModel
-from schemas.task import TaskCreateRequest, TaskResponse
+from schemas.task import TaskCreateRequest, TaskResponse, SortOrder
 
 logger = get_logger()
 
@@ -25,11 +25,11 @@ class TaskService:
         created_task = self.task_db.create_task(task_model)
         return TaskResponse(task_id=created_task.task_id, **created_task.model_dump())
 
-    def get_task_list(self, user_id: str) -> List[TaskResponse]:
+    def get_task_list(self, user_id: str, sort: SortOrder) -> List[TaskResponse]:
         got_task_model_list = self.task_db.get_task_list(user_id)
         tasks = [TaskResponse(task_id=task_model.task_id, **task_model.model_dump())
                  for task_model in got_task_model_list]
-        return sorted(tasks, key=lambda x: x.registration_datetime, reverse=True)
+        return sorted(tasks, key=lambda x: x.registration_datetime, reverse=(sort == SortOrder.desc))
 
     def get_task(self, user_id: str, task_id: UUID) -> TaskResponse:
         got_task_model = self.task_db.get_task_by_id(user_id, task_id)

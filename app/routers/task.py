@@ -1,12 +1,12 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from core.logging import get_logger
 from dependencies import UserDep, TaskServiceDep
 from schemas.error import ErrorResponse
-from schemas.task import TaskCreateRequest, TaskResponse
+from schemas.task import TaskCreateRequest, TaskResponse, SortOrder
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -23,12 +23,12 @@ def create_task(user: UserDep, task_req: TaskCreateRequest, task_service: TaskSe
 
 
 @router.get("/tasks",
-            description="タスクリストを取得します。リストは登録日時の降順です。",
+            description="タスクリストを取得します。リストは登録日時でソートします。デフォルトは降順です。",
             response_model=List[TaskResponse],
             responses={403: {"description": "Forbidden", "model": ErrorResponse}})
-def list_tasks(user: UserDep, task_service: TaskServiceDep):
+def list_tasks(user: UserDep, task_service: TaskServiceDep, sort: SortOrder = Query(SortOrder.desc)):
     logger.info(f"userId={user.id}")
-    return task_service.get_task_list(user.id)
+    return task_service.get_task_list(user.id, sort)
 
 
 @router.get("/tasks/{task_id}",

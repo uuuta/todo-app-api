@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import Annotated
 from uuid import UUID
 
@@ -47,3 +48,8 @@ class TaskResponse(TaskBase):
               serialization_alias="endDatetime",
               examples=["2023-12-19 09:00:00"])
     done: bool = Field(False, description="完了フラグ", examples=[True])
+
+
+class SortOrder(str, Enum):
+    asc = "asc"
+    desc = "desc"
