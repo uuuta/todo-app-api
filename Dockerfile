@@ -1,8 +1,6 @@
-FROM python:3.12 as builder
+FROM python:3.12 AS builder
 
 WORKDIR /tmp
-
-COPY ./pyproject.toml ./poetry.lock ./
 
 ENV POETRY_VERSION=1.8.5
 RUN pip install "poetry==${POETRY_VERSION}"
@@ -11,9 +9,8 @@ RUN poetry export -f requirements.txt -o requirements.txt
 
 FROM public.ecr.aws/lambda/python:3.12
 
-COPY --from=builder /tmp/requirements.txt requirements.txt
-RUN pip install -U pip && \
-    pip install -r requirements.txt - target "${LAMBDA_TASK_ROOT}" -U - no-cache-dir
+COPY --from=builder /tmp/requirements.txt ${LAMBDA_TASK_ROOT}
+RUN pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}" --no-cache-dir
 
 ARG TIMEZONE=Asia/Tokyo
 ENV TZ=${TIMEZONE}

@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for TODO APP API with API Gateway, Lambda, and DynamoDB
+
+Parameters:
+  ECRImageUri:
+    Type: String
+    Description: URI of the ECR image to deploy to
+
+Resources:
+  TasksTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: tasks
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: taskId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: taskId
+          KeyType: RANGE
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  TODOAPILambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: TODOAPIFunction
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ImageUri: !Ref ECRImageUri
+      PackageType: Image
+      Timeout: 30
+      MemorySize: 128
+
+  TODOAPILambdaFunctionUrl:
+    Type: 'AWS::Lambda::Url'
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: !GetAtt TODOAPILambdaFunction.Arn
+      Cors:
+        AllowCredentials: false
+        AllowHeaders:
+          - '*'
+        AllowMethods:
+          - '*'
+        AllowOrigins:
+          - '*'
+
+  # TODOAPILambdaFunctionUrlPermission:
+  #   Type: 'AWS::Lambda::Permission'
+  #   Properties:
+  #     FunctionName: !Ref TODOAPILambdaFunction
+  #     Principal: "*"
+  #     Action: "lambda:InvokeFunctionUrl"
+  #     FunctionUrlAuthType: "NONE"
+
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                Resource: !GetAtt TasksTable.Arn
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 'arn:aws:logs:*:*:*'
+
+  APIGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: TODO-API
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Policy:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "execute-api:Invoke"
+            Resource: "arn:aws:execute-api:*:*:*"
+
+  ApiRootResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref APIGateway
+      ParentId: !GetAtt APIGateway.RootResourceId
+      PathPart: "{proxy+}"
+
+  APIAnyMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ResourceId: !Ref ApiRootResource
+      RestApiId: !Ref APIGateway
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+            - { LambdaArn: !GetAtt TODOAPILambdaFunction.Arn }
+
+  OptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref APIGateway
+      ResourceId: !Ref ApiRootResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels:
+            application/json: Empty
+
+  LambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !Ref TODOAPILambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+          - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayId}/*
+          - { ApiGatewayId: !Ref APIGateway }
