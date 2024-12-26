@@ -28,8 +28,8 @@ services:
       - APP_ENVIRONMENT=local
       - APP_LOG_LEVEL=DEBUG
       # https://repost.aws/articles/ARc4hEkF9CRgOrw8kSMe6CwQ/troubleshooting-the-access-key-id-or-security-token-is-invalid-error-after-upgrading-dynamodb-local-to-version-2-0-or-greater
-      - AWS_ACCESS_KEY_ID=DUMMYACCESSKEYID # (A–Z, a–z)と(0–9)しか使えない
-      - AWS_SECRET_ACCESS_KEY=DUMMYSECRETKEY # (A–Z, a–z)と(0–9)しか使えない
+      - AWS_ACCESS_KEY_ID=FakeAccessKeyId # (A–Z, a–z)と(0–9)しか使えない
+      - AWS_SECRET_ACCESS_KEY=FakeSecretAccessKey # (A–Z, a–z)と(0–9)しか使えない
       - AWS_DEFAULT_REGION=ap-northeast-1
     volumes:
       - ./app:/app # 修正が反映されるようにバインドマウントを設定＆起動時にreload指定
