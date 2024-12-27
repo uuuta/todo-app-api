@@ -97,13 +97,6 @@ Resources:
       EndpointConfiguration:
         Types:
           - REGIONAL
-      Policy:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "execute-api:Invoke"
-            Resource: "arn:aws:execute-api:*:*:*"
 
   ApiRootResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -111,6 +104,9 @@ Resources:
       RestApiId: !Ref APIGateway
       ParentId: !GetAtt APIGateway.RootResourceId
       PathPart: "{proxy+}"
+    DependsOn:
+      - APIGateway 
+      - TODOAPILambdaFunction
 
   APIAnyMethod:
     Type: 'AWS::ApiGateway::Method'
@@ -164,3 +160,21 @@ Resources:
         Fn::Sub:
           - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayId}/*
           - { ApiGatewayId: !Ref APIGateway }
+
+  APIDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: !Ref APIGateway
+      Description: "Initial deployment for dev stage"
+    DependsOn: 
+      - APIAnyMethod
+      - OptionsMethod
+
+  DevStage:
+    Type: 'AWS::ApiGateway::Stage'
+    Properties:
+      StageName: dev
+      RestApiId: !Ref APIGateway
+      DeploymentId: !Ref APIDeployment
+      Description: "Development stage"
+    DependsOn: APIDeployment
