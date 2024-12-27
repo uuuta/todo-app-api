@@ -3,13 +3,19 @@ import logging.config
 
 from config import settings
 
+if settings.environment == "local":
+    logging_format = "%(asctime)s [%(levelname)s] %(name)s %(funcName)s() L%(lineno)d: %(message)s"
+else:
+    # aws環境の場合はCloudWatchLogsに時間を任せる
+    logging_format = "[%(levelname)s] %(name)s %(funcName)s() L%(lineno)d: %(message)s"
+
 logging_config = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s %(funcName)s() L%(lineno)d: %(message)s"},
-        "default": {"format": "%(asctime)s [%(levelname)s] %(name)s %(funcName)s() L%(lineno)d: %(message)s"},
-        "access": {"format": "%(asctime)s [%(levelname)s] %(name)s %(funcName)s() L%(lineno)d: %(message)s"},
+        "standard": {"format": logging_format},
+        "default": {"format": logging_format},
+        "access": {"format": logging_format},
     },
     "handlers": {
         "default": {

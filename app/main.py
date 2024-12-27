@@ -21,7 +21,7 @@ app.add_middleware(
     # cookieの共有を行う設定（defaultはFalse）
     allow_credentials=True,
     # 許可するHTTPメソッドを指定（defaultはGET）
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["*"],
     # オリジン間リクエストで許可するHTTPヘッダーを指定
     # Accept、Accept-Language、Content-Language、Content-Typeヘッダーが常に許可
     allow_headers=["*"],
