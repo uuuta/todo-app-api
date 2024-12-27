@@ -94,7 +94,7 @@ $ aws dynamodb batch-write-item --request-items file://db/dynamodb/task_seed.jso
 
 #### 動作確認
 
-Swagger UI(http://127.0.0.1:8080/docs)から動作確認ができます。  
+Swagger UI (http://127.0.0.1:8080/docs) から動作確認ができます。  
 本実装例では、疑似的な認証を実装しています。 アプリケーションは、Authorizationヘッダからユーザー名を取得して処理を行います。  
 下記のようにAuthorizationヘッダを設定して実行してください。
 
