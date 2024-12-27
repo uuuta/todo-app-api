@@ -152,7 +152,7 @@ aws cloudformation create-stack \
 | APIルート         | URL                                                      |
 |----------------|----------------------------------------------------------|
 | APIルート         | {API Gatewayのエンドポイント}           |
-| APIドキュメント      | {Lambdaの関数URL}/docs |
+| APIドキュメント      | {Lambda関数URL}/docs |
 
 
 #### API Gatewayのエンドポイントについて
