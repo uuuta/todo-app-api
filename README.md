@@ -115,20 +115,14 @@ Lambdaの関数URLが作成されますが、リソースベースのポリシ�
 アクセスする場合は、リソースベースのポリシーで許可設定を追加します。
 ※ URLを知っている人なら誰でもアクセスできるようになる点に注意
 
-```json
-    {
-      "Sid": "FunctionURLAllowPublicAccess",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "lambda:InvokeFunctionUrl",
-      "Resource": "arn:aws:lambda:ap-northeast-1:6123456789012:function:FunctionName",
-      "Condition": {
-        "StringEquals": {
-          "lambda:FunctionUrlAuthType": "NONE"
-        }
-      }
-    }
-```
+[マネージメントコンソールからの手順]
+
+1. 当該Lambda関数の画面を開く
+2. 「設定」タブを選択
+3. 左メニューの「アクセス権限」を選択
+4. 「リソースベースのポリシーステートメント」セクションの「アクセス権限を追加」をクリック
+5. 「関数URL」を選択、認証タイプに「None」を選択して、「保存」する
+
 
 ## APIドキュメント
 
