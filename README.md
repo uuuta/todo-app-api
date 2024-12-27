@@ -113,7 +113,8 @@ aws cloudformation create-stack \
 
 Lambdaの関数URLが作成されますが、リソースベースのポリシーは設定していません（コメントアウト）ので、そのままではAPIドキュメントにアクセスできません。
 アクセスする場合は、リソースベースのポリシーで許可設定を追加します。
-※ 誰でもアクセスできるようになる点に注意
+※ URLを知っている人なら誰でもアクセスできるようになる点に注意
+
 ```json
     {
       "Sid": "FunctionURLAllowPublicAccess",
@@ -129,3 +130,8 @@ Lambdaの関数URLが作成されますが、リソースベースのポリシ�
     }
 ```
 
+## APIドキュメント
+
+APIドキュメントはFastAPIを起動することで確認可能です。  
+OAS形式のファイルは `openapi.json` です。  
+API仕様を更新した場合は、 `openapi.py` を実行することで `openapi.json` を更新できます。  
